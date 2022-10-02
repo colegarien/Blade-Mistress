@@ -5,10 +5,12 @@
 #include "stdafx.h"
 
 #include "..\src\helper\linklist.h"
-#include "..\src\helper\fileFind.h"
 #include "..\src\helper\crc.h"
 #include "BMLauncher.h"
 #include "BMUpdater.h"
+
+#include <chrono>
+#include <vector>
 
 struct UpdateServer;
 
@@ -21,7 +23,7 @@ public:
 	FileRecord(int doid, char *doname);
 	virtual ~FileRecord();
 
-	FILETIME time;
+    std::time_t time;
 	DWORD size;
 };
 
@@ -43,8 +45,6 @@ private:
 	bool newLauncher;
 	const UpdateServer& m_updateServer;
 
-	void ProcessDirectory(DoublyLinkedList *recList, char* dir);
-	void ProcessIndexData(DoublyLinkedList *list, char *data, DWORD length);
 	int DownloadFile(char *fileName);
 	void UpdateTextBox(char* txt);
 };

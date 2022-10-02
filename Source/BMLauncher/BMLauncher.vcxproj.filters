@@ -39,9 +39,6 @@
     <ClCompile Include="..\src\Helper\Dataobje.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Helper\fileFind.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LauncherConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,6 +46,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Helper\files.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -82,9 +82,6 @@
     <ClInclude Include="..\Src\Helper\Dataobje.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\Helper\fileFind.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LauncherConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -98,6 +95,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UpdateServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Helper\files.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
