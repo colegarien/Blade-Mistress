@@ -24,6 +24,7 @@ xcopy Assets\readme.txt StagingFilesClient\ /Y
 xcopy Assets\textColors.txt StagingFilesClient\ /Y
 
 xcopy Build\Win32\Release\BBOnline\BBOnline.exe StagingFilesClient\ /Y
+xcopy Build\Win32\Release\BBOnline\*.dll StagingFilesClient\ /Y
 
 :: Delete old dat file
 del ..\StagingFilesClient\index.dat

@@ -35,5 +35,6 @@ xcopy Assets\readme.txt StagingFilesServer\ /Y
 xcopy Assets\textColors.txt StagingFilesServer\ /Y
 
 xcopy Build\Win32\Release\ServerWrapper\ServerWrapper.exe StagingFilesServer\ /Y
+xcopy Build\Win32\Release\ServerWrapper\*.dll StagingFilesServer\ /Y
 
 popd

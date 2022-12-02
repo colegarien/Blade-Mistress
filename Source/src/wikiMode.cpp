@@ -3,7 +3,8 @@
 #include <windowsx.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wininet.h>
+#include <string>
+#include <sstream>
 
 #include "./puma/puma.h"
 #include "./puma/pumamesh.h"
@@ -25,6 +26,7 @@
 #include "BBOClient.h"
 
 #include "BBOServer.h"
+#include "../src/Helper/files.h";
 
 enum 
 {
@@ -152,17 +154,6 @@ int WikiMode::Activate(void) // do this when the mode becomes the forbboClient->
 
 
 //   UIRectTextBox *tBox;
-
-/*
-	tBox = new UIRectTextBox(WIKM_BUTTON_TEXT, 0,0,100,100); 
-	tBox->process = wikiModeProcess;
-	tBox->SetText("TEST\n\n\n\nTsst again");
-	tBox->textFlags = D3DFONT_CENTERED | D3DFONT_VERTCENTERED;
-   tBox->fillStyle = UIRECT_WINDOW_STYLE_ALL;
-	tBox->fillArt = NULL;
-	tBox->font = 2;
-   scrollWin->AddChild(tBox);
-  */
    tButt = new UIRectTextButton(WIKM_BUTTON_RETURN,
 		             centerX-100, puma->ScreenH() - 40,
 		             centerX+102, puma->ScreenH() - 40+26);
@@ -173,7 +164,7 @@ int WikiMode::Activate(void) // do this when the mode becomes the forbboClient->
 //	tButt->fillArt = uiPopUpLongArt;
    fullWindow->AddChild(tButt);
 
-	LoadPage("http://www.blademistress.com/wiki/pmwiki.php");
+	LoadPage("https://web.archive.org/web/20060210042006id_/http://www.blademistress.com/wiki/pmwiki.php");
 
    fullWindow->Arrange();
 
@@ -411,73 +402,12 @@ int wikiBoxIndex;
 //******************************************************************
 void WikiMode::LoadPage(char *pageURL)
 {
-	// open the file and try to load it into the big buffer
-	HINTERNET hInternetSession;   
-	HINTERNET hURL;
-//	char tempText[1024];
-	BOOL bResult;
-	DWORD dwBytesRead;
    UIRectTextBox *tBox;
 
-	int gotFile = FALSE;
 	wikiBoxIndex = 0;
 
-	// Make internet connection.
-	hInternetSession = InternetOpen(
-							"Microsoft Internet Explorer",   // agent
-							INTERNET_OPEN_TYPE_PRECONFIG,      // access
-							NULL, NULL, 0);            // defaults
-
-	int openTries = 0;
-	while (!hInternetSession && openTries < 20)
-	{
-		++openTries;
-		Sleep(100);
-		hInternetSession = InternetOpen(
-								"Microsoft Internet Explorer",   // agent
-								INTERNET_OPEN_TYPE_PRECONFIG,      // access
-								NULL, NULL, 0);            // defaults
-	}
-
-	if (hInternetSession)
-	{
-
-		// Make connection to desired page.
-		hURL = InternetOpenUrl(
-					hInternetSession,             // session handle
-					pageURL,                      // URL to access
-					NULL, 0, 0, 0);               // defaults
-
-		int connectTries = 0;
-		while (!hURL && connectTries < 20)
-		{
-			++connectTries;
-			Sleep(100);
-		}
-
-		if (hURL)
-		{
-			int writePtr = 0;
-			do
-			{
-				// read page into memory buffer
-				bResult = InternetReadFile(hURL, (LPSTR)&wikiPageBuffer[writePtr],
-								(DWORD)4096, &dwBytesRead);
-
-				writePtr += dwBytesRead;
-			} while(!bResult || dwBytesRead != 0); 
-
-			wikiPageBuffer[writePtr] = 0; // terminate the buffer
-			gotFile = TRUE;
-
-			// close down connections
-			InternetCloseHandle(hURL);
-
-		}
-
-		// close down connections
-		InternetCloseHandle(hInternetSession);
-	}
+    std::stringstream wikiBuffer("");
+    bool gotFile = ReadRemoteFileToStream(&wikiBuffer, std::string(pageURL));
 
 	// clear out the window
 	UIRect *r = (UIRect *) scrollWin->childRectList.First();
@@ -516,11 +446,12 @@ void WikiMode::LoadPage(char *pageURL)
 		return;
 	}
 
-	// parse the buffer
+    // copy stream into wiki buffer
+    strcpy(wikiPageBuffer, wikiBuffer.str().c_str());
 
+	// parse the buffer
 	char tBuff[1024], tBuff2[512];
 	int copyFlag = TRUE, tBuffIndex;
-
 
 	tBuffIndex = 0;
 	for (int i = 0; i < strlen(wikiPageBuffer);)
@@ -614,8 +545,6 @@ void WikiMode::LoadPage(char *pageURL)
 		}
 		else
 			tBuff[tBuffIndex++] = wikiPageBuffer[i++];
-
-
 	}
 
 

@@ -254,6 +254,9 @@
     <ClCompile Include="..\src\Helper\PBKDF2.cpp">
       <Filter>Helper</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Helper\files.cpp">
+      <Filter>Helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Network\Client.h">
@@ -533,6 +536,9 @@
       <Filter>Helper</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Helper\PBKDF2.h">
+      <Filter>Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Helper\files.h">
       <Filter>Helper</Filter>
     </ClInclude>
   </ItemGroup>
