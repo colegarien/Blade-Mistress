@@ -8,33 +8,18 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
-#include <wininet.h>
-#include <process.h>
+
 #include <chrono>
 #include <iostream>
 #include <istream>
 #include <streambuf>
 #include <string>
 #include <sstream>
+#include <fstream>
+#include <bitset>
 
 #include "Autoupdate.h"
 #include "UpdateServer.h"
-
-
-
-
-//***************************************************************************************
-FileRecord::FileRecord(int doid, char *doname)	 : DataObject(doid,doname)
-{
-	;
-}
-
-//***************************************************************************************
-FileRecord::~FileRecord()
-{
-	;
-}
-//*********************************************************************
 
 
 AutoUpdate::AutoUpdate(const UpdateServer& updateServer) 
@@ -49,101 +34,33 @@ int AutoUpdate::DownloadFile(char *fileName)
 	char tmp[1024];
 	sprintf_s( tmp, 1024, "Updating %s  ",fileName );
 	UpdateTextBox( tmp );
-	HINTERNET hInternetSession;   
-	HINTERNET hURL;
-	char cBuffer[4096];
+
+    bool gotFile = false;
 	char tempText[1024];
-	BOOL bResult;
-	DWORD dwBytesRead;
-	HANDLE hOutputFile;
 
-	int gotFile = FALSE;
 
-	// Make internet connection.
-	hInternetSession = InternetOpen(
-							"Microsoft Internet Explorer",   // agent
-							INTERNET_OPEN_TYPE_PRECONFIG,      // access
-							NULL, NULL, 0);            // defaults
+	// create output directory
+	sprintf_s(tempText,1024,"%s\\%s",m_updateServer.pszServerName, fileName);
+    auto outputFilePath = std::filesystem::path(tempText);
+    if (!std::filesystem::exists(outputFilePath.parent_path())) {
+        std::filesystem::create_directories(outputFilePath.parent_path());
+    }
 
-	int openTries = 0;
-	while (!hInternetSession && openTries < 20)
-	{
-		++openTries;
-		Sleep(100);
-		hInternetSession = InternetOpen(
-								"Microsoft Internet Explorer",   // agent
-								INTERNET_OPEN_TYPE_PRECONFIG,      // access
-								NULL, NULL, 0);            // defaults
-	}
+    if (std::filesystem::exists(outputFilePath) && (std::filesystem::status(outputFilePath).permissions() & std::filesystem::perms::owner_write) == std::filesystem::perms::none) {
+        // do not have write permission to file!
+        UpdateTextBox("ERROR: ");
+        UpdateTextBox(tempText);
+        UpdateTextBox(" is read only!\r\n");
+        return false;
+    }
 
-	if (hInternetSession)
-	{
+    char remoteUrl[1024];
+    sprintf_s(remoteUrl, 1024, "%s/%s", m_updateServer.pszServerURL, fileName);
 
-		// Make connection to desired page.
-		sprintf_s(tempText,1024,"%s/%s", m_updateServer.pszServerURL, fileName);
-		hURL = InternetOpenUrl(
-					hInternetSession,               // session handle
-					tempText,   // URL to access
-					NULL, 0, 0, 0);               // defaults
-
-		int connectTries = 0;
-		while (!hURL && connectTries < 20)
-		{
-			++connectTries;
-			Sleep(100);
-		}
-
-		if (hURL)
-		{
-			// create output file
-			sprintf_s(tempText,1024,"%s\\%s",m_updateServer.pszServerName, fileName);
-			int index = strlen(tempText);
-			while (index > 0 && '\\' != tempText[index])
-				--index;
-			if ('\\' == tempText[index])
-				tempText[index] = 0;
-
-			CreateDirectory(tempText, NULL);
-
-			sprintf_s(tempText,1024,"%s\\%s",m_updateServer.pszServerName, fileName);
-			hOutputFile = CreateFile(tempText,GENERIC_WRITE,0, NULL, CREATE_ALWAYS,
-									 FILE_ATTRIBUTE_NORMAL, NULL);
-
-			DWORD att = GetFileAttributes( tempText );
-
-			if( ( att & FILE_ATTRIBUTE_READONLY ) == FILE_ATTRIBUTE_READONLY ) {
-				UpdateTextBox( "ERROR: " );
-				UpdateTextBox( tempText );
-				UpdateTextBox( " is read only!\r\n" );
-				return false;
-			}
-
-			do
-			{
-				// read page into memory buffer
-				bResult = InternetReadFile(hURL, (LPSTR)cBuffer,
-								(DWORD)4096, &dwBytesRead);
-
-				// write out data
-				DWORD bytesWritten;
-				bResult = WriteFile(hOutputFile, cBuffer, dwBytesRead, &bytesWritten, NULL);
-
-				UpdateTextBox( "." );
-
-			} while( /*!bResult ||*/ dwBytesRead != 0 ); 
-			// close down file
-			CloseHandle(hOutputFile);
-			gotFile = TRUE;
-
-			// close down connections
-			InternetCloseHandle(hURL);
-
-		}
-
-		// close down connections
-		InternetCloseHandle(hInternetSession);
-	}
-
+    // download file from remote url
+    std::ofstream outputStream(outputFilePath, std::ios::out | std::ios::binary | std::ios::trunc);
+    gotFile = ReadRemoteFileToStream(&outputStream, remoteUrl);
+    outputStream.close();
 
 	if (gotFile)
 		UpdateTextBox( "DONE\r\n" );
@@ -158,61 +75,23 @@ int AutoUpdate::DownloadFile(char *fileName)
 void AutoUpdate::Update()
 {
 	char tmp[256];
-
 	newLauncher = false;
-
 	UpdateTextBox( "Updating Blade Mistress\r\n\r\n" );
-
-	DoublyLinkedList *masterList;
-
-	masterList = new DoublyLinkedList();
 
 	// fill local list
 	sprintf_s(tmp, 256, "%s", m_updateServer.pszServerName);
     auto localRecords = GetFileDetails(std::filesystem::path(tmp));
 
+	// download and parse index file
+    std::stringstream indexDataStream("");
+    char urlString[1024];
+    sprintf_s(urlString, 1024, "%s/index.dat", m_updateServer.pszServerURL);
+    bool remoteSucess = ReadRemoteFileToStream(&indexDataStream, urlString);
+    if (!remoteSucess) {
+        UpdateTextBox("Unable to get index file from website.\r\n");
+        return;
+    }
 
-	// fill remote list
-	HINTERNET hInternetSession;   
-	HINTERNET hURL;
-	char cBuffer[1024 * 100];
-	BOOL bResult;
-	DWORD dwBytesRead;
-
-	// Make internet connection.
-	hInternetSession = InternetOpen(
-							"Microsoft Internet Explorer",   // agent
-							INTERNET_OPEN_TYPE_PRECONFIG,      // access
-							NULL, NULL, INTERNET_FLAG_NO_CACHE_WRITE);            // defaults
-
-	char tempText[1024];
-	sprintf_s(tempText,1024,"%s/index.dat", m_updateServer.pszServerURL);
-	// Make connection to desired page.
-	hURL = InternetOpenUrl(
-				hInternetSession,               // session handle
-				tempText,   // URL to access
-				NULL, 0, INTERNET_FLAG_NO_CACHE_WRITE, 0);               // defaults
-
-    // Closely related to IndexMaker.cpp :: ProcessDirectory
-    unsigned long fileSize;
-	InternetQueryDataAvailable( hURL, &fileSize, INTERNET_FLAG_NO_CACHE_WRITE,0);
-	if (fileSize < 1)
-	{
-		UpdateTextBox("Unable to get index file from website.\r\n");
-		return;
-	}
-
-	// read page into memory buffer
-	bResult = InternetReadFile(hURL, (LPSTR)cBuffer,
-					(unsigned long)1024*100, &dwBytesRead);
-
-	// close down connections
-	InternetCloseHandle(hURL);
-	InternetCloseHandle(hInternetSession);
-
-	// parse downloaded index file
-    std::string indexDataBuffer(cBuffer, cBuffer + dwBytesRead);
-    std::stringstream indexDataStream(indexDataBuffer);
     auto remoteRecords = ReadFileDetailsFromStream(&indexDataStream);
 
 	int errorCount = 0;

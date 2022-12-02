@@ -293,49 +293,6 @@ FirstOptionMode::FirstOptionMode(int doid, char *doname) : GameMode(doid,doname)
 
 }
 
-BOOL GetURLPageAndStoreToDisk(LPSTR pURLPage, LPSTR pOutputFile)
-   {
-HINTERNET hInternetSession;   
-HINTERNET hURL;
-char cBuffer[1024];      // Assume small page for sample.
-BOOL bResult;
-DWORD dwBytesRead;
-HANDLE hOutputFile;
-
-// Make internet connection.
-hInternetSession = InternetOpen(
-                  "Microsoft Internet Explorer",   // agent
-                  INTERNET_OPEN_TYPE_PRECONFIG,      // access
-                  NULL, NULL, 0);            // defaults
-
-// Make connection to desired page.
-hURL = InternetOpenUrl(
-         hInternetSession,               // session handle
-         pURLPage,   // URL to access
-         NULL, 0, 0, 0);               // defaults
-
-// read page into memory buffer
-bResult = InternetReadFile(hURL, (LPSTR)cBuffer,
-            (DWORD)1024, &dwBytesRead);
-
-// close down connections
-InternetCloseHandle(hURL);
-InternetCloseHandle(hInternetSession);
-
-// create output file
-hOutputFile = CreateFile(pOutputFile,GENERIC_WRITE,0, NULL, CREATE_ALWAYS,
-                         FILE_ATTRIBUTE_NORMAL, NULL);
-// write out data
-DWORD bytesWritten;
-bResult = WriteFile(hOutputFile, cBuffer, dwBytesRead, &bytesWritten, NULL);
- 
-// close down file
-CloseHandle(hOutputFile);
-
-// return success
-return(TRUE);
-}
-
 //******************************************************************
 FirstOptionMode::~FirstOptionMode()
 {
@@ -395,8 +352,6 @@ int FirstOptionMode::Activate(void) // do this when the mode becomes the forgrou
 
 
     uiAlpha = 100;
-
-//	GetURLPageAndStoreToDisk("http://www.aggressive.to/puma.zip", "c:\puma.zip");
 
     SetEnvironment();
 

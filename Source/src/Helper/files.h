@@ -18,6 +18,8 @@ public:
     }
 };
 
+bool ReadRemoteFileToStream(std::ostream* outStream, std::string remoteFilePath);
+
 std::vector<std::filesystem::path> GetFilePaths(std::filesystem::path rootDirectory);
 std::vector<FileDetail> GetFileDetails(std::filesystem::path rootDirectory);
 

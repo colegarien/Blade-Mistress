@@ -13,10 +13,14 @@ The game had unique features for the time, such as:
 Even after almost 20 years, there are still players interested in playing and modifying the game, which is humbling.  And so we have decided to release this code into the public domain so they could add new features and fix bugs.
 
 # Buliding
-Building requires Visual Studio 2017 and has only been tested on Windows 10 64bit.  The following components need to be installed:
+Building requires Visual Studio 2020 and has only been tested on Windows 10 64bit.  The following components need to be installed:
 
 * Windows 8.1 SDK
 * MFC and ATL support
+
+It's recommended to use vcpkg to install the required libraries:
+
+* curl
 
 # Deploying
 The Scripts directory has 2 scripts, one that creates a Client folder heirarchy and one that creates a Server heirarchy.  Both require Release executables to be built.  The Client structure is also what is used by the Update system. The contents of StagingFilesClient can go on any web server, in any sub folder.  That full URL should then be used in the Launcher as the update URL.

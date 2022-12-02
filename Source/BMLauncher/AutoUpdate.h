@@ -16,17 +16,6 @@ struct UpdateServer;
 
 //***************************************************************************************
 
-class FileRecord : public DataObject
-{
-public:
-
-	FileRecord(int doid, char *doname);
-	virtual ~FileRecord();
-
-    std::time_t time;
-	DWORD size;
-};
-
 
 class AutoUpdate
 {
@@ -41,7 +30,7 @@ public:
 
 
 private:
-	HWND dialog;
+	HWND dialog; // TODO replace UpdateTextBox with more generic logging interface
 	bool newLauncher;
 	const UpdateServer& m_updateServer;
 

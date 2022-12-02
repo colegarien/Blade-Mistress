@@ -1,7 +1,31 @@
 #include "files.h"
 #include "crc.h"
 #include <cassert>
+#include <curl/curl.h>
 
+static size_t _CurlWriteToStreamCallback(void* contents, size_t size, size_t nb, void* ostream) {
+    ((std::ostream*)ostream)->write((char*)contents, size * nb);
+    return size * nb;
+}
+
+bool ReadRemoteFileToStream(std::ostream* outStream, std::string remoteFileUrl) {
+    CURL* curl;
+    CURLcode res;
+
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, remoteFileUrl);
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "Blade Mistress Reader/1.0"); // TODO maybe pull in current client version number?
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _CurlWriteToStreamCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, outStream);
+        res = curl_easy_perform(curl);
+
+        curl_easy_cleanup(curl);
+        return res == CURLE_OK;
+    }
+
+    return false;
+}
 
 std::vector<std::filesystem::path> GetFilePaths(std::filesystem::path rootDirectory) {
     std::vector<std::filesystem::path> paths;
