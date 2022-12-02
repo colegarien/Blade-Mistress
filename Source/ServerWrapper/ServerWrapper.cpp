@@ -8,7 +8,6 @@
 #include <windowsx.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wininet.h>
 
 	// System Headers.
 #include <winsock2.h>

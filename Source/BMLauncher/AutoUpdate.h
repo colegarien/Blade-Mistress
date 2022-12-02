@@ -1,10 +1,8 @@
 #ifndef __AUTOUPDATE_H
 #define __AUTOUPDATE_H
 
-
 #include "stdafx.h"
 
-#include "..\src\helper\linklist.h"
 #include "..\src\helper\crc.h"
 #include "BMLauncher.h"
 #include "BMUpdater.h"
@@ -13,8 +11,6 @@
 #include <vector>
 
 struct UpdateServer;
-
-//***************************************************************************************
 
 
 class AutoUpdate

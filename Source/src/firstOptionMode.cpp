@@ -3,7 +3,6 @@
 #include <windowsx.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wininet.h>
 
 #include "./puma/puma.h"
 #include "./puma/pumamesh.h"

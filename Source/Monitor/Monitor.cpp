@@ -8,10 +8,9 @@
 #include <windowsx.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wininet.h>
 
 	// System Headers.
-#include <winsock2.h>
+#include <winsock2.h> // TODO replace winsock2.h with kissnet https://github.com/Ybalrid/kissnet
 #include <mmsystem.h>
 
 #include "client.h"
