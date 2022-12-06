@@ -30,16 +30,10 @@
     <ClCompile Include="src\Network\IOCPSocket.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\Network\Server.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="src\Network\SocketObject.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="src\Network\TCPSocket.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Network\UDPSocket.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="src\Helper\AutoLog.cpp">
@@ -307,9 +301,6 @@
     <ClInclude Include="src\Network\NetWorldRadio.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="src\Network\Server.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="src\Network\SocketObject.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -317,9 +308,6 @@
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="Src\Network\TCPSocket.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Network\UDPSocket.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="Src\Helper\AutoLog.h">

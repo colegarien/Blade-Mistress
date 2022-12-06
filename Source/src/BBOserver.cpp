@@ -83,16 +83,13 @@ UserMessage::~UserMessage()
 
 //******************************************************************
 //******************************************************************
-BBOServer::BBOServer(int useIOCP)
+BBOServer::BBOServer()
 {
 
     bboServer = this;
 
     pleaseKillMe = 10000; // kill when this gets to 0
 
-    IOCPFlag = useIOCP;
-    if (useIOCP)
-    {
         IOCPSocket::StartIOCP();
         lserver = new IOCPServer();
 #ifdef _TEST_SERVER
@@ -100,16 +97,6 @@ BBOServer::BBOServer(int useIOCP)
 #else
         ((IOCPServer *)lserver)->startServer(3678, 100, NULL);
 #endif
-    }
-    else
-    {
-        lserver = new Server();
-#ifdef _TEST_SERVER
-        ((Server *)lserver)->startServer(9178, 100, NULL, NULL);
-#else
-        ((Server *)lserver)->startServer(3678, 100, NULL, NULL);
-#endif
-    }
 
 	// Create Logs directory
 	CreateDirectory("Logs", NULL);
@@ -125,9 +112,6 @@ BBOServer::BBOServer(int useIOCP)
     sprintf(tempText,"--------Server Starting at %d/%02d, %d:%02d\n", lt.value.wMonth, lt.value.wDay, 
              lt.value.wHour, lt.value.wMinute);
     LogOutput("gamelog.txt", tempText);
-
-//	lserver = new Server();
-//	lserver->startServer(3678, 32, NULL, NULL);
      
 //	mobs       = new DoublyLinkedList();
 //	avatars    = new DoublyLinkedList();
@@ -992,8 +976,7 @@ BBOServer::~BBOServer()
 //	delete dungeonList;
 
     delete lserver;
-    if (IOCPFlag)
-        IOCPSocket::StopIOCP();
+    IOCPSocket::StopIOCP();
 }
 
 
@@ -1109,7 +1092,6 @@ void BBOServer::Tick(void)
     }
     */
 
-    if (IOCPFlag)
     {
         // ***** bytes transfered
         delta = now - ((IOCPServer *)lserver)->lastTimeUpdate;

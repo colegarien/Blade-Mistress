@@ -13,7 +13,6 @@
 	// Needed Headers.
 #include "DisableWarnings.h"
 #include "TCPSocket.h"
-#include "UDPSocket.h"
 #include "../helper/Mutex.h"
 #include "NetWorldRadio.h"
 #include "../helper/Fifo.h"
@@ -45,10 +44,6 @@ class Client : public NetWorldRadio
 		bool disconnect();
 
 		virtual bool IsConnected(void);
-
-			// the UDP callback.
-		int	UDPNetCallback(	UDPSocket *, struct _WSANETWORKEVENTS &, const char *, 
-							int size, void * context);
 
 	public:
 

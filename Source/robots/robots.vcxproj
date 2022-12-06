@@ -140,10 +140,8 @@
     <ClCompile Include="..\src\Network\Iocp.cpp" />
     <ClCompile Include="..\src\Network\IOCPServer.cpp" />
     <ClCompile Include="..\src\Network\IOCPSocket.cpp" />
-    <ClCompile Include="..\src\Network\Server.cpp" />
     <ClCompile Include="..\src\Network\SocketObject.cpp" />
     <ClCompile Include="..\src\Network\TCPSocket.cpp" />
-    <ClCompile Include="..\src\Network\UDPSocket.cpp" />
     <ClCompile Include="..\src\Puma\d3dapp.cpp" />
     <ClCompile Include="..\src\Puma\d3dfont.cpp" />
     <ClCompile Include="..\src\Puma\d3dutil.cpp" />
@@ -321,11 +319,9 @@
     <ClInclude Include="..\src\Network\NetSystem.h" />
     <ClInclude Include="..\src\Network\NetWorldMessages.h" />
     <ClInclude Include="..\src\Network\NetWorldRadio.h" />
-    <ClInclude Include="..\src\Network\Server.h" />
     <ClInclude Include="..\src\Network\SocketObject.h" />
     <ClInclude Include="..\src\Network\SOverlapped.h" />
     <ClInclude Include="..\src\Network\TCPSocket.h" />
-    <ClInclude Include="..\src\Network\UDPSocket.h" />
     <ClInclude Include="..\Src\version.h" />
     <ClInclude Include="..\src\Puma\d3dapp.h" />
     <ClInclude Include="..\src\Puma\d3dfont.h" />
