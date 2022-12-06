@@ -317,6 +317,7 @@
     <ClInclude Include="..\src\Network\IOCPSocket.h" />
     <ClInclude Include="..\src\Network\ISocket.h" />
     <ClInclude Include="..\src\Network\ISocketHandler.h" />
+    <ClInclude Include="..\src\Network\kissnet.hpp" />
     <ClInclude Include="..\src\Network\NetSystem.h" />
     <ClInclude Include="..\src\Network\NetWorldMessages.h" />
     <ClInclude Include="..\src\Network\NetWorldRadio.h" />

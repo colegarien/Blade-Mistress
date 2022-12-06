@@ -24,8 +24,7 @@ char lastIPName[64] = "";
 
 TCPSocket::TCPSocket(int socketHandle)
 		:	m_socket(socketHandle), m_event(NULL), m_exitEvent(NULL),
-			m_socketThread(NULL), m_socketThreadID(0), m_socketHandler(NULL),
-			m_context(NULL), m_clientAddress(0)
+			m_socketHandler(NULL), m_context(NULL), m_clientAddress(0)
 {
 }
 
@@ -117,13 +116,7 @@ bool TCPSocket::startup(int recvSize, NETCALLBACK func, void * context)
 	}
 
 		// create the thread for this socket.
-	m_socketThread = CreateThread(NULL, 65536, ThreadMain, this, 0, &m_socketThreadID);
-
-		// did we fail.
-	if(m_socketThread == NULL)
-	{
-		return false;
-	}
+    m_thread = std::thread(TCPSocket::ThreadMain, this); // TODO return false if this fails!!
 
 		// set the callback function.
 	m_socketHandler = func;
@@ -145,7 +138,7 @@ bool TCPSocket::shutdown()
 
 		// Kill the thread.
 	SetEvent(m_exitEvent);
-	WaitForSingleObject(m_socketThread, 1000);
+    m_thread.join(); // TODO may need to make this fancier to wait the 1000ms and hard kill it
 
 		// close down the event.
 	WSACloseEvent((HANDLE)m_exitEvent);
@@ -228,10 +221,10 @@ bool TCPSocket::connect(const std::string & name, int port)
 // function.
 // =============================================
 
-unsigned long __stdcall TCPSocket::ThreadMain(void * context)
+void TCPSocket::ThreadMain(void* context)
 {
 		// set the pointer to the instance.
-	TCPSocket *		lthis = (TCPSocket *)context;
+    TCPSocket* lthis = (TCPSocket*)context;
 
 		// Other Variables.
 	WSANETWORKEVENTS	events;
@@ -361,7 +354,7 @@ unsigned long __stdcall TCPSocket::ThreadMain(void * context)
 		// cleanup that buffer.
 	delete[] buffer;
 
-	return retval;
+    return;
 }
 
 // =============================================

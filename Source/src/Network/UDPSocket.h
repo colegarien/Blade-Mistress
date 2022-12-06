@@ -12,6 +12,7 @@
 
 	// Needed Headers.
 #include <string>
+#include <thread>
 
 	// forward declarations.
 struct _WSANETWORKEVENTS;
@@ -66,13 +67,13 @@ class UDPSocket
 			// this holds the sockets event for threading.
 		void *				m_event;
 		void *				m_exitEvent;
-		void *				m_socketThread;
-		unsigned long		m_socketThreadID;
 		int					m_recvSize;
 
 			// This holds the callback handler.
 		UDPCALLBACK			m_socketHandler;
 		void *				m_context;
+
+        std::thread         m_thread;
 
 			// is this socket active as a server.
 		bool				m_isServer;
@@ -81,7 +82,7 @@ class UDPSocket
 	private:
 
 			// this is the main function for the socket thread.
-		static unsigned long __stdcall ThreadMain(void * context);
+		static void ThreadMain(void * context);
 
 };
 

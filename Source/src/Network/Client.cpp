@@ -39,7 +39,7 @@ Client::~Client()
 // given server.
 // =============================================
 
-bool Client::connect(const std::string & serverName, int port)
+bool Client::connect(const std::string & serverName, int port) // TODO connect to the server
 {
 		// set the parameters.
 	m_port				= port;
@@ -78,7 +78,7 @@ bool Client::connect(const std::string & serverName, int port)
 // is running.
 // =============================================
 
-bool Client::disconnect()
+bool Client::disconnect() // TODO clean up everything, fresh slate!
 {
 	m_closeMutex.Lock();
 

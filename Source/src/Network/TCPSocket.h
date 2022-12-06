@@ -12,6 +12,7 @@
 
 	// Needed Headers.
 #include <string>
+#include <thread>
 #include "../helper/Mutex.h"
 
 	// forward declarations.
@@ -66,8 +67,6 @@ class TCPSocket
 			// this holds the sockets event for threading.
 		void *				m_event;
 		void *				m_exitEvent;
-		void *				m_socketThread;
-		unsigned long		m_socketThreadID;
 		int					m_recvSize;
 
 			// This holds the callback handler.
@@ -75,10 +74,12 @@ class TCPSocket
 		void *				m_context;
 		Mutex				m_mutex;
 
+        std::thread         m_thread;
+
 	private:
 
 			// this is the main function for the socket thread.
-		static unsigned long __stdcall ThreadMain(void * context);
+        static void ThreadMain(void* context);
 
 };
 

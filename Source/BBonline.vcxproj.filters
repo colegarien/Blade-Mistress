@@ -573,5 +573,8 @@
     <ClInclude Include="src\Helper\files.h">
       <Filter>Helper</Filter>
     </ClInclude>
+    <ClInclude Include="src\Network\kissnet.hpp">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

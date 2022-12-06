@@ -23,8 +23,7 @@ UDPSocket * UDPSocket::m_instance = NULL;
 
 UDPSocket::UDPSocket(bool isSingleton)
 		:	m_socket(0xffffffff), m_event(NULL), m_exitEvent(NULL),
-			m_socketThread(NULL), m_socketThreadID(0), m_socketHandler(NULL),
-			m_context(NULL), m_isSingleton(isSingleton)
+			m_socketHandler(NULL), m_context(NULL), m_isSingleton(isSingleton)
 {
 	if(m_isSingleton == true)
 	{
@@ -122,13 +121,7 @@ bool UDPSocket::startup(int port, int recvSize, UDPCALLBACK func, void * context
 		}
 
 			// create the thread for this socket.
-		m_socketThread = CreateThread(NULL, 65536, ThreadMain, this, 0, &m_socketThreadID);
-
-			// did we fail.
-		if(m_socketThread == NULL)
-		{
-			return false;
-		}
+        m_thread = std::thread(UDPSocket::ThreadMain, this); // TODO return false if this failed
 
 			// set the callback function.
 		m_socketHandler = func;
@@ -157,7 +150,7 @@ bool UDPSocket::shutdown()
 	{
 			// Kill the thread.
 		SetEvent(m_exitEvent);
-		WaitForSingleObject(m_socketThread, 1000);
+        m_thread.join(); // TODO may need to make this fancier to wait the 1000ms and hard kill it
 
 			// close down the event.
 		WSACloseEvent((HANDLE)m_exitEvent);
@@ -178,7 +171,7 @@ bool UDPSocket::shutdown()
 // function.
 // =============================================
 
-unsigned long __stdcall UDPSocket::ThreadMain(void * context)
+void UDPSocket::ThreadMain(void * context)
 {
 		// set the pointer to the instance.
 	UDPSocket *		lthis = (UDPSocket *)context;
@@ -269,7 +262,7 @@ unsigned long __stdcall UDPSocket::ThreadMain(void * context)
 		// cleanup that buffer.
 	delete[] buffer;
 
-	return retval;
+    return;
 }
 
 // =============================================

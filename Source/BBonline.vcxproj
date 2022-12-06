@@ -1425,6 +1425,7 @@
     <ClInclude Include="Src\Network\IOCPSocket.h" />
     <ClInclude Include="Src\Network\ISocket.h" />
     <ClInclude Include="Src\Network\ISocketHandler.h" />
+    <ClInclude Include="src\Network\kissnet.hpp" />
     <ClInclude Include="src\Network\NetSystem.h" />
     <ClInclude Include="src\Network\NetWorldMessages.h" />
     <ClInclude Include="src\Network\NetWorldRadio.h" />
