@@ -5,7 +5,6 @@
 #include "longtime.h"
 #include "flockPoints.h"
 #include "BBO.h"
-#include "./network/server.h"
 #include "./network/NetWorldMessages.h"
 #include "memory_helper.h"
 

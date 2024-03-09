@@ -56,52 +56,6 @@ int historyCounter = 0, historyTicker = 0;
 int playerNumHistoryList[300];
 int cyclesHistoryList[300];
 
-
-// =============================================
-// This function gets called when any of the
-// server managed sockets have an event get 
-// signalled.
-// =============================================
-
-//***********************************************************************************
-int GlobalUDPNetCallback(	UDPSocket *socket, struct _WSANETWORKEVENTS &events, const char *buffer, 
-							int size, void * context)
-{
-		// varaibles.
-	Server *	server		= NULL;
-//	Client *	client		= NULL;
-	int			bytesParsed = 0;
-/*
-	if(serverWorld)
-	{
-		server	= (Server *)serverWorld->radio;
-	}
-		
-	if(clientWorld1)
-	{
-		client	= (Client *)clientWorld1->radio;
-	}
-*/
-
-		// try the server first.
-	if(server != NULL)
-	{
-		bytesParsed = server->UDPNetCallback(socket, events, buffer, size, server);
-	}
-/*
-	if((bytesParsed == 0) && (client != NULL))
-	{
-		bytesParsed = client->UDPNetCallback(socket, events, buffer, size, client);
-	}
-  */
-	if(bytesParsed == 0)
-	{
-		bytesParsed = size;
-	}
-
-	return bytesParsed;
-}
-
 // Global Variables:
 HINSTANCE hInst;								// current instance
 HWND hWnd;
@@ -133,11 +87,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	WSAData wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-#ifdef NO_IOCP
-	server = new BBOServer(FALSE);
-#else
 	server = new BBOServer();
-#endif
 
 	DWORD lastTime = 0;
 
@@ -177,9 +127,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			DWORD thisTime = timeGetTime();
 			if (lastTime < thisTime - 1000 * 10) // every ten seconds
 			{
-#ifdef NO_IOCP
-				server->lserver->CollectGarbage();
-#endif
 				lastTime = thisTime;
 
 				UpdateScreen();
@@ -206,18 +153,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
    
 
 	// Main message loop:
-/*
-	while (GetMessage(&msg, NULL, 0, 0)) 
-	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		if (server)
-			server->Tick();
-	}
-*/
 	delete server;
 	WSACleanup();
 
@@ -429,31 +364,6 @@ void UpdateScreen(void)
 
 	validRecordNum = 0;
 
-#ifdef NO_IOCP
-	srand(1);
-
-	for (int testNum = 0; testNum < 50; ++testNum)
-	{
-		sprintf(recordArray[validRecordNum].userName,"Test %d WWWWWWW  iii  JJJ", testNum);
-		recordArray[validRecordNum].socketVal = testNum + 1000;
-
-		sprintf(recordArray[validRecordNum].placeName,"Logging in...%d ",testNum);
-		sprintf(recordArray[validRecordNum].avatarName,"AvName %d", testNum);
-		recordArray[validRecordNum].health = 100;
-		recordArray[validRecordNum].lifeTime = 20000+testNum;
-		recordArray[validRecordNum].maxHealth = 100+testNum;
-		recordArray[validRecordNum].x = rand() % 128;
-		recordArray[validRecordNum].y = rand() % 128;
-		recordArray[validRecordNum].isInWorld = TRUE;
-		recordArray[validRecordNum].isPaid    = FALSE;
-
-		recordArray[validRecordNum].money    = testNum * 10;
-		recordArray[validRecordNum].totalVal = testNum * 15;
-
-		++validRecordNum;
-	}
-#endif
-
 	BBOSAvatar *curAvatar = (BBOSAvatar *) server->incoming->First();
 	while (curAvatar && validRecordNum < NUM_OF_PLAYER_RECORDS)
 	{
@@ -622,15 +532,6 @@ void DrawScreen(HWND hWnd, HDC hdc)
 	SetTextColor(hdc, curColor); 
 
    SelectObject( hdc, infoFont); 
-
-/*
-XX	sprintf(&(headerText[strlen(headerText)]),
-		"    TOTAL PLAYERS   %d ", totalPlayers);
-	sprintf(&(headerText[strlen(headerText)]),
-		"TOTAL CONNECTIONS   %d (%d)", 
-		       ((IOCPServer *)(server->lserver))->curConnections(),
-		       ((IOCPServer *)(server->lserver))->curSockets());
-*/	
 
 	// draw player info
 	curColor = RGB(155, 155, 255);

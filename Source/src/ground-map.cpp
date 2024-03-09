@@ -10,7 +10,6 @@
 //#include "BBO-Sgenerator.h"
 //#include "BBO-Stower.h"
 #include "monsterData.h"
-#include ".\network\server.h"
 #include "version.h"
 
 #include "Ground-Map.h"

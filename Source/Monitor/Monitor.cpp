@@ -24,51 +24,6 @@ Client *client = NULL;
 char screenText[2048];
 
 
-// =============================================
-// This function gets called when any of the
-// client managed sockets have an event get 
-// signalled.
-// =============================================
-
-//***********************************************************************************
-int GlobalUDPNetCallback(	UDPSocket *socket, struct _WSANETWORKEVENTS &events, const char *buffer, 
-							int size, void * context)
-{
-		// varaibles.
-	Client *	client		= NULL;
-//	Client *	client		= NULL;
-	int			bytesParsed = 0;
-/*
-	if(clientWorld)
-	{
-		client	= (Client *)clientWorld->radio;
-	}
-		
-	if(clientWorld1)
-	{
-		client	= (Client *)clientWorld1->radio;
-	}
-*/
-
-		// try the client first.
-	if(client != NULL)
-	{
-		bytesParsed = client->UDPNetCallback(socket, events, buffer, size, client);
-	}
-/*
-	if((bytesParsed == 0) && (client != NULL))
-	{
-		bytesParsed = client->UDPNetCallback(socket, events, buffer, size, client);
-	}
-  */
-	if(bytesParsed == 0)
-	{
-		bytesParsed = size;
-	}
-
-	return bytesParsed;
-}
-
 // Global Variables:
 HINSTANCE hInst;								// current instance
 HWND hWnd;

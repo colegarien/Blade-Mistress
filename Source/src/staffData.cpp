@@ -3,6 +3,7 @@
 #include <windowsx.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmath>
 
 #include "inventory.h"
 #include "StaffData.h"
@@ -90,7 +91,7 @@ void UpdateStaff(InventoryObject *staffObject, float workLevel)
 
 		for (int j = 0; j < MAGIC_MAX; ++j)
 		{
-			dev += abs(staffImbueValue[i][j] - extra->imbue[j]);
+			dev += std::abs(staffImbueValue[i][j] - extra->imbue[j]);
 			if (extra->imbue[j] > 0)
 				active = TRUE;
 		}
@@ -168,7 +169,7 @@ int StaffImbueExperience(InventoryObject *staffObject, int skillLevel)
 {
 	InvStaff *extra = (InvStaff *)staffObject->extra;
 
-	if (abs(ImbueStaffChallenge(extra) - skillLevel) < 9)
+	if (std::abs(ImbueStaffChallenge(extra) - skillLevel) < 9)
 	{
 		int retVal = (ImbueStaffChallenge(extra) - skillLevel + 1);
 		if (retVal < 1)

@@ -207,7 +207,7 @@ FirstOptionMode::FirstOptionMode(int doid, char *doname) : GameMode(doid,doname)
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
     if (createServerFlag)
-        server = new BBOServer(FALSE);
+        server = new BBOServer();
 
     lclient = new Client();
 

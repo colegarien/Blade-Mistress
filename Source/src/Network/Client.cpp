@@ -39,7 +39,7 @@ Client::~Client()
 // given server.
 // =============================================
 
-bool Client::connect(const std::string & serverName, int port)
+bool Client::connect(const std::string & serverName, int port) // TODO connect to the server
 {
 		// set the parameters.
 	m_port				= port;
@@ -78,7 +78,7 @@ bool Client::connect(const std::string & serverName, int port)
 // is running.
 // =============================================
 
-bool Client::disconnect()
+bool Client::disconnect() // TODO clean up everything, fresh slate!
 {
 	m_closeMutex.Lock();
 
@@ -229,28 +229,6 @@ int Client::NetCallback(TCPSocket *socket, struct _WSANETWORKEVENTS &events, con
 	}
 
 	lthis->m_closeMutex.Unlock();
-
-	return bytesParsed;
-}
-
-// =============================================
-// This function gets called when any of the
-// server managed sockets have an event get 
-// signalled.
-// =============================================
-
-int Client::UDPNetCallback(UDPSocket *socket, struct _WSANETWORKEVENTS &events, const char *buffer, 
-							int size, void * context)
-{
-		// varaibles.
-	Client *	lthis		= (Client *)context;
-	int			bytesParsed = 0;
-
-		// handle recevie messages.
-	if(events.lNetworkEvents & FD_READ)
-	{
-		bytesParsed = lthis->handleReceive(buffer, size, socket->socketHandle());
-	}
 
 	return bytesParsed;
 }
@@ -477,38 +455,23 @@ void Client::SendMsg(int size, const void *dataPtr, int flags, std::vector<TagID
 			// copy the data into the stream
 		stream->write(dataPtr, size);
 
-			// post  it to the clients.
-		if(flags & SOCK_FLAG_UNGUARANTEED)
+		// post  it to the clients.
+		if(m_socket->send(stream->buffer(), stream->used()) == false)
 		{
-			UDPSocket * udp = UDPSocket::instance();
-
-			if(udp != NULL)
+			if(m_backupSendFifo.IsFull() == true)
 			{
-				udp->send(m_address, m_port, stream->buffer(), stream->used());
-			}
-
-			delete stream;
-		}
-
-		else
-		{
-			if(m_socket->send(stream->buffer(), stream->used()) == false)
-			{
-				if(m_backupSendFifo.IsFull() == true)
-				{
-					delete stream;
-				}
-
-				else
-				{
-					m_backupSendFifo.Push(stream);
-				}
+				delete stream;
 			}
 
 			else
 			{
-				delete stream;
+				m_backupSendFifo.Push(stream);
 			}
+		}
+
+		else
+		{
+			delete stream;
 		}
 	}
 }

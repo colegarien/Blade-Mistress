@@ -2,7 +2,6 @@
 #define BBOSERVER_H
 
 #include ".\helper\linklist.h"
-#include ".\network\server.h"
 #include ".\network\IOCPServer.h"
 #include "BBO.h"
 #include "inventory.h"
@@ -48,7 +47,7 @@ class BBOServer
 {
 public:
 
-	BBOServer(int useIOCP = TRUE);
+	BBOServer();
 	virtual ~BBOServer();
 
 	void Tick();
@@ -147,7 +146,6 @@ public:
 	DWORD testTime, dungeonUpdateTime, lastConnectTime, lastGraveyardTime, 
 		   tenSecondTime, dayTimeCounter, smasherCounter, labyMapTime;
 	int errorContactVal;
-	int IOCPFlag;
 
 //	GroundMap *map;
 	LongTime countDownTime;

@@ -3,6 +3,7 @@
 #include <windowsx.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmath>
 
 #include "inventory.h"
 #include "TotemData.h"
@@ -86,7 +87,7 @@ void UpdateTotem(InventoryObject *totemObject)
 
 		for (int j = 0; j < MAGIC_MAX; ++j)
 		{
-			dev += abs(totemImbueValue[i][j] - extra->imbue[j]);
+			dev += std::abs(totemImbueValue[i][j] - extra->imbue[j]);
 			if (extra->imbue[j] > 0)
 				active = TRUE;
 		}

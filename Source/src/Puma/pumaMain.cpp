@@ -73,51 +73,6 @@ Client *	lclient;
 char ipAddress[128];
 int createServerFlag = FALSE;
 
-
-// =============================================
-// This function gets called when any of the
-// server managed sockets have an event get 
-// signalled.
-// =============================================
-
-int GlobalUDPNetCallback(	UDPSocket *socket, struct _WSANETWORKEVENTS &events, const char *buffer, 
-                            int size, void * context)
-{
-        // varaibles.
-    Server *	server		= NULL;
-    Client *	client		= NULL;
-    int			bytesParsed = 0;
-/*
-    if(serverWorld)
-    {
-        server	= (Server *)serverWorld->radio;
-    }
-        
-    if(clientWorld1)
-    {
-        client	= (Client *)clientWorld1->radio;
-    }
-*/
-
-        // try the server first.
-    if(server != NULL)
-    {
-        bytesParsed = server->UDPNetCallback(socket, events, buffer, size, server);
-    }
-
-    if((bytesParsed == 0) && (client != NULL))
-    {
-        bytesParsed = client->UDPNetCallback(socket, events, buffer, size, client);
-    }
-
-    if(bytesParsed == 0)
-    {
-        bytesParsed = size;
-    }
-
-    return bytesParsed;
-}
-
 //***************************************************************************************
 LRESULT WINAPI MsgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -263,7 +218,7 @@ void ParseCommandLine(char * commandLine)
             }
             else if (!strnicmp( &(commandLine[linePoint]) , "N" , 1))
             {
-                // password on commandline
+                // na,e on commandline
 
                 sscanf_s(&commandLine[linePoint+1], "%s", nameBuffer, _countof(nameBuffer));
 
